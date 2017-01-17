@@ -19,7 +19,7 @@ const initialState = {
     level: 'INFO'
   },
   broker: {
-    url: 'ws://localhost:4080',
+    url: 'ws://localhost:8080',
     status: 'BROKER_DISCONNECTED',
   },
   sensors: [

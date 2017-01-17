@@ -4,6 +4,9 @@ import { connect } from 'react-redux'
 import Value from '../types/Value'
 import SensorType from '../types/SensorType'
 
+//import d3 from '../d3'
+import * as d3 from "d3";
+
 import './Sensor.css'
 
 const Sensor = ({id, name, type, data, noSensor}) => {
@@ -26,7 +29,27 @@ const Sensor = ({id, name, type, data, noSensor}) => {
   const values = data.map(((datum,index) => (<tr key={index}><td>{value(datum, type)+" "+unit(type)}</td></tr>)));
   if(noSensor) {
     return (<div className="Sensor">nope</div>)
+      //{values}
   }
+  
+  function test () {
+
+      console.log(values[0].props.children.props.children);
+
+      //var data = [4, 8, 15, 16, 23, 42];
+
+      var x = d3.scaleLinear()
+          .domain([0, d3.max(data)])
+          .range([0, 420]);
+
+      d3.select(".chart")
+          .selectAll("div")
+          .data(values)
+          .enter().append("div")
+          .style("width", function(d) { return x(d.props.children.props.children) + "px"; })
+          .text(function(d) { return d.props.children.props.children; });
+  }
+  
   return (
     <div className="Sensor">
       <h1>{name}</h1>
@@ -36,7 +59,8 @@ const Sensor = ({id, name, type, data, noSensor}) => {
       <h3>Historique</h3>
       <table>
         <tbody>
-          {values}
+        <div className="chart"></div>
+        {test()}
         </tbody>
       </table>
     </div>
@@ -51,3 +75,5 @@ export default connect(
       return {noSensor:true}
     }
   )(Sensor)
+
+
