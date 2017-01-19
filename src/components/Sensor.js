@@ -9,7 +9,10 @@ import * as d3 from "d3";
 
 import './Sensor.css'
 
-const Sensor = ({id, name, type, data, noSensor}) => {
+let valnul = "";
+
+const Sensor = ({id, name, type, data, noSensor}) =>  {
+
   const unit = (type) => {
     const units = {}
     units[SensorType.TEMPERATURE] = "°C"
@@ -17,9 +20,16 @@ const Sensor = ({id, name, type, data, noSensor}) => {
     return units[type] || ""
   }
   const value  = (v, t) => {
+
+    /*if(t == SensorType.ON_OFF)
+          valnul ="onoff";
+      else
+          valnul="";*/
+
     if(v instanceof Value ){
       return v.toString()
     }
+
     switch(t){
       case SensorType.PERCENT: return (v*100).toFixed(2);
       case SensorType.TEMPERATURE: return (v*1).toFixed(1);
@@ -49,6 +59,8 @@ const Sensor = ({id, name, type, data, noSensor}) => {
           .style("width", function(d) { return x(d.props.children.props.children) + "px"; })
           .text(function(d) { return d.props.children.props.children; });
   }
+
+
   
   return (
     <div className="Sensor">
@@ -60,12 +72,128 @@ const Sensor = ({id, name, type, data, noSensor}) => {
       <table>
         <tbody>
         <div className="chart"></div>
-        {test()}
+        <div className="onoff"></div>
+        <Content className="comp" test={values}></Content>
         </tbody>
       </table>
     </div>
   )
 }
+
+class Content extends React.Component {
+
+    componentWillMount() {
+        console.log('Component WILL MOUNT!')
+    }
+
+    componentDidMount() {
+
+        /*if(valnul="onoff") {
+
+            console.log('Allow')
+
+            var svgContainer = d3.select(".onoff").selectAll("div")
+                .data(this.props.test).enter().append("svg")
+                .attr("width", 200)
+                .attr("height", 200);
+
+
+            var circle = svgContainer.append("circle")
+                .attr("cx", 30)
+                .attr("cy", 30)
+                .attr("r", 20);
+        }
+        else {*/
+
+            console.log('Component DID MOUNT!')
+            var x = d3.scaleLinear()
+                .domain([0, 100])
+                .range([0, 1000]);
+
+            console.log(this.props.test)
+
+            d3.select(".chart") //
+                .selectAll("div")
+                .data(this.props.test)
+                .enter().append("div")
+                .style("width", function (d) {
+                    return x(d.props.children.props.children) + "px";
+                })
+                .text(function (d) {
+                    return d.props.children.props.children;
+                });
+        //}
+
+        console.log('Fin du composant');
+    }
+
+    componentWillReceiveProps(newProps) {
+        console.log('Component WILL RECIEVE PROPS!')
+    }
+
+    shouldComponentUpdate(newProps, newState) {
+        return true;
+    }
+
+    componentWillUpdate(nextProps, nextState) {
+        console.log('Component WILL UPDATE!');
+        d3.select(".chart").selectAll("div").remove();
+        d3.select(".onoff").selectAll("div").remove();
+
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        console.log('Component DID UPDATE!');
+
+        /*if(valnul="onoff") {
+
+            console.log('Allow                                         ----- ')
+
+            var svgContainer = d3.select(".onoff").data(this.props.test).enter().append("svg")
+                .attr("width", 200)
+                .attr("height", 200);
+
+
+            var circle = svgContainer.append("circle")
+                                     .attr("cx", 30)
+                                     .attr("cy", 30)
+                                     .attr("r", 20);
+        }
+        else {*/
+            var x = d3.scaleLinear()
+                .domain([0, 100])
+                .range([0, 1000]);
+
+            console.log(this.props.test)
+
+            d3.select(".chart") //
+                .selectAll("div")
+                .data(this.props.test)
+                .enter().append("div")
+                .style("width", function(d) { return x(d.props.children.props.children) + "px"; })
+                .text(function(d) { return d.props.children.props.children; });
+        //}
+
+
+        console.log('Fin du composant');
+    }
+
+    componentWillUnmount() {
+        console.log('Component WILL UNMOUNT!')
+        d3.select(".comp").remove();
+    }
+
+    render() {
+
+        return (
+            <div>
+
+            </div>
+        );
+    }
+}
+
+
 export default connect(
     (state, ownProp) => {
       const sensor = state.sensors.filter((s) => (s.id === ownProp.params.id))
