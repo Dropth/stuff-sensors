@@ -37,7 +37,7 @@
   .wrapper {
       flex-direction: column; /* affichage vertical */
     }
-    .nav,
+    .nav
      {
       width: auto; /* pour écraser la valeur 10em */
     }

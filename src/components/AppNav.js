@@ -7,7 +7,7 @@ const AppNav = () => (
     <ul>
       <li><AppNavLink to="livefeed">Real Time Sensors</AppNavLink></li>
       <li><AppNavLink to="other">Other</AppNavLink></li>
-      <li><AppNavLink to="other">Bof</AppNavLink></li>
+      <li><AppNavLink to="histo">Historique</AppNavLink></li>
     </ul>
   </nav>
 )

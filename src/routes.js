@@ -1,14 +1,16 @@
 
 import App from './components/App';
 import LiveSensors from  './components/LiveSensors';
+import HistoSensors from  './components/HistoSensors';
 import Sensor from  './components/Sensor';
+import SensorsHisto from  './components/SensorsHisto';
 import BrokerStatus from './components/BrokerStatus'
 
 export const getRoutes = (store) => {
 const routes = [{
   path: '/',
   component: App,
-  indexRoute: { onEnter: (nextState, replace) => replace('/livefeed') },
+  //indexRoute: { onEnter: (nextState, replace) => replace('/livefeed') },
   childRoutes: [
     { name:'live',
       path:'/livefeed',
@@ -27,6 +29,23 @@ const routes = [{
       ],
       indexRoute: { name: 'broker_status', component: BrokerStatus },
     },
+      {
+          name:'histo',
+          path:'/histo',
+          component: HistoSensors,
+          childRoutes: [
+              { name: 'histo_sensor',
+                  path:'/histo/:id',
+                  component: SensorsHisto,
+                  onEnter: (nextState, replace) => {
+                      const state = store.getState();
+                      if(state.sensors.filter((s) => (s.id === nextState.params.id)).length === 0 ){
+                          replace('/histo')
+                      }
+                  }
+              }
+          ],
+      }
   ]
 }]
 return routes;
