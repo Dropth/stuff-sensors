@@ -81,14 +81,7 @@ class HistoForm extends React.Component {
             listMeasures: payload
         });
 
-        console.log("mamène je comprends rien c de la chiasse : " + this.state.listMeasures)
-        var monArraySeria = '';
-        for (var i in this.state.listMeasures)
-        {
-            monArraySeria += this.afficherProps(this.state.listMeasures[i],i);
-        }
-        //
-        alert(monArraySeria);
+        document.getElementById('histo').innerHTML ="";
 
         ReactDOM.render(<Measure measures={this.state.listMeasures}/>, document.getElementById('histo'));
 
@@ -179,16 +172,132 @@ class Measure extends React.Component {
         this.state = {
             measures: mesure,
             deb: 0,
-            fin: 9
+            fin: 9,
+            value : 'all',
+            inputVal : 0,
+            tabInterval : []
         }
 
         this.handleClick = this.handleClick.bind(this);
         this.handleClickAfter = this.handleClickAfter.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleChange = this.handleChange.bind(this);
+        this.handleInputChange = this.handleInputChange.bind(this);
+    }
+
+    handleInputChange(event) {
+        const target = event.target;
+        const value = target.value;
+        const name = target.name;
+
+        this.setState({
+            [name]: value
+        });
+
+        console.log("Je suis en pls help");
+    }
+
+    handleSubmit(event) {
+
+        Date.prototype.getWeek = function() {
+
+            // Create a copy of this date object
+            var target  = new Date(this.valueOf());
+
+            // ISO week date weeks start on monday, so correct the day number
+            var dayNr   = (this.getDay() + 6) % 7;
+
+            // Set the target to the thursday of this week so the
+            // target date is in the right year
+            target.setDate(target.getDate() - dayNr + 3);
+
+            // ISO 8601 states that week 1 is the week with january 4th in it
+            var jan4    = new Date(target.getFullYear(), 0, 4);
+
+            // Number of days between target date and january 4th
+            var dayDiff = (target - jan4) / 86400000;
+
+            if(new Date(target.getFullYear(), 0, 1).getDay() < 5) {
+                // Calculate week number: Week 1 (january 4th) plus the
+                // number of weeks between target date and january 4th
+                return 1 + Math.ceil(dayDiff / 7);
+            }
+            else {  // jan 4th is on the next week (so next week is week 1)
+                return Math.ceil(dayDiff / 7);
+            }
+        };
+
+        if (this.state.value !== 'all') {
+
+            console.log("GOGOGOGGOGOGOGGOGOGO")
+
+            let tabVal = [];
+
+            for (let val of this.state.measures) {
+                let date = new Date(val["date"]);
+                date.setTime(date.getTime() + date.getTimezoneOffset() * 60 * 1000);
+                let formVal = Number(this.state.inputVal);
+
+                switch(this.state.value) {
+                    case "hour":
+                        console.log("Test : " + typeof(date.getHours()) +" == " + typeof(formVal) + " ---> ");
+                        if(date.getHours() === formVal) {
+                            tabVal.push(val);
+                        }
+                        break;
+                    case "day":
+                        if(date.getDate() === formVal) {
+                            tabVal.push(val);
+                        }
+                        break;
+                    case "week":
+                        console.log("Test : " + date.getWeek() +" == " + formVal + " ---> ");
+                        if(date.getWeek() === formVal) {
+                            tabVal.push(val);
+                        }
+                        break;
+                }
+            }
+
+            console.log("TEEEEEEEEEEEEEEEEST : " + tabVal)
+
+            this.setState({tabInterval: tabVal});
+        }
+        else
+            this.setState({tabInterval: []});
+
+        if(this.state.value !== "all")
+            if(this.state.tabInterval.length === 0)
+                document.getElementById("nothing").innerHTML = "L'intervalle n'a rien donné de concluant";
+            else
+                document.getElementById("nothing").innerHTML = "";
+        else
+            document.getElementById("nothing").innerHTML = "";
+
+        event.preventDefault();
+    }
+
+    handleChange(event) {
+        this.setState({value: event.target.value});
+
+        /*if(this.state.value === "all") {
+            document.getElementById("inputVal").disabled = true;
+        }
+        else {
+            document.getElementById("inputVal").disabled = false;
+        }*/
     }
 
     handleClick(event) {
-        console.log("COUUUUUUUUUUUUUUUUUUUUUUUCOUUUUUUUUUUUUUUUUUU : " + this.state)
-        if(this.state.fin <= this.state.measures.length-1) {
+
+        let isOk=0;
+
+        if(this.state.tabInterval.length != 0)
+            isOk = this.state.tabInterval.length-1;
+        else
+            isOk = this.state.measures.length-1;
+
+        if(this.state.fin <= isOk) {
 
             let temp = this.state.fin;
             this.state.deb = this.state.fin;
@@ -221,6 +330,8 @@ class Measure extends React.Component {
         return resultat;
     }
 
+
+
     render() {
 
         if(this.state.deb < 0)
@@ -232,18 +343,52 @@ class Measure extends React.Component {
         console.log("This isn't my final form ----> Deb : " + this.state.deb + " ________  Fin : " + this.state.fin)
 
         let end =this.state.end;
-        if(this.state.fin <= this.state.measures.length-1)
-            end = this.state.fin;
-        else
-            end = this.state.measures.length-1;
 
-        for (cpt; cpt < end; cpt++) {
-            tabFinal[cpt] = this.state.measures[cpt];
+        if(this.state.tabInterval.length === 0) {
+
+            if (this.state.fin <= this.state.measures.length - 1)
+                end = this.state.fin;
+            else
+                end = this.state.measures.length - 1;
+
+            for (cpt; cpt < end; cpt++) {
+                tabFinal[cpt] = this.state.measures[cpt];
+            }
+
+        }
+        else {
+            if (this.state.fin <= this.state.tabInterval.length - 1)
+                end = this.state.fin;
+            else
+                end = this.state.tabInterval.length - 1;
+
+            for (cpt; cpt < end; cpt++) {
+                tabFinal[cpt] = this.state.tabInterval[cpt];
+            }
         }
 
         return (
 
             <div id="test">
+
+                <form onSubmit={this.handleSubmit}>
+                    <label>
+                        Choix de l'intervalle :
+                        <select value={this.state.value} onChange={this.handleChange}>
+                            <option value="all">All</option>
+                            <option value="hour">Heure</option>
+                            <option value="day">Journée (Jour du mois)</option>
+                            <option value="week">Semaine (Semaine de l'année)</option>
+                        </select>
+                    </label>
+                    <label>
+                        <input name="inputVal" type="number" id="inputVal" required="true" onChange={this.handleInputChange} />
+                    </label>
+                    <input type="submit" value="Submit" id="submit"/>
+                </form>
+
+                <h2 id="nothing"></h2>
+
                 <table>
                     <thead>
                         <tr>
