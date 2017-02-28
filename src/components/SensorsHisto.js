@@ -194,8 +194,6 @@ class Measure extends React.Component {
             [name]: value
         });
 
-
-
         console.log("Je suis en pls help");
     }
 
@@ -262,20 +260,34 @@ class Measure extends React.Component {
             }
 
             console.log("TEEEEEEEEEEEEEEEEST : " + tabVal)
+            console.log("TEEEEEEEEEEEEEEEEST  TAMER PUTAIN : " + tabVal.length)
 
-            this.setState({tabInterval: tabVal});
+            //this.setState({tabInterval: tabVal});
+            this.state.tabInterval = tabVal;
+
+            console.log("TEEEEEEEEEEEEEEEEST : " + this.state.tabInterval)
+            console.log("TEEEEEEEEEEEEEEEEST  TAMER PUTAIN : " + this.state.tabInterval.length)
         }
         else
-            this.setState({tabInterval: []});
+            this.state.tabInterval = [];
+
+
+        console.log("TEEEEEEEEEEEEEEEEST NUMMMMMMMMMMMMMBER 2 : " + this.state.tabInterval.length)
 
         if(this.state.value !== "all")
             if(this.state.tabInterval.length === 0)
                 document.getElementById("nothing").innerHTML = "L'intervalle n'a rien donné de concluant";
-            else
+            else {
                 document.getElementById("nothing").innerHTML = "";
+                this.state.deb = 0;
+                this.state.fin = 9;
+            }
+
         else
             document.getElementById("nothing").innerHTML = "";
 
+
+        this.forceUpdate();
         event.preventDefault();
     }
 
@@ -285,9 +297,11 @@ class Measure extends React.Component {
 
         console.log("COUCOU " + select)
 
-        this.setState({value: select});
+        //this.setState({value: select});
+        this.state.value = select;
+        document.getElementById("testSelect").value = this.state.value;
 
-
+        console.log("COUCOU ALLLLLLLLLOW " + this.state.value)
 
         if(select === "all") {
             document.getElementById("inputVal").disabled = true;
@@ -296,6 +310,7 @@ class Measure extends React.Component {
 
             document.getElementById("inputVal").disabled = false;
         }
+        this.forceUpdate();
     }
 
     handleClick(event) {
@@ -384,7 +399,7 @@ class Measure extends React.Component {
                 <form onSubmit={this.handleSubmit}>
                     <label>
                         Choix de l'intervalle :
-                        <select value={this.state.value} onChange={this.handleChange}>
+                        <select id="testSelect" value={this.state.value} onChange={this.handleChange}>
                             <option value="all">All</option>
                             <option value="hour">Heure</option>
                             <option value="day">Journée (Jour du mois)</option>
@@ -399,8 +414,7 @@ class Measure extends React.Component {
 
                 <h2 id="nothing"></h2>
 
-                <table>
-                    <thead>
+                <table>                    <thead>
                         <tr>
                             <th>_id</th>
                             <th>sensorId</th>

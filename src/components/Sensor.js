@@ -3,13 +3,14 @@ import { connect } from 'react-redux'
 
 import Value from '../types/Value'
 import SensorType from '../types/SensorType'
+import * as smApi from '../api/SensorMeasures'
 
 //import d3 from '../d3'
 import * as d3 from "d3";
 
 import './Sensor.css'
 
-let valnul = "";
+let tabVal = {"nomSensor":"","local":""};
 
 const Sensor = ({id, name, type, data, noSensor}) =>  {
 
@@ -60,6 +61,44 @@ const Sensor = ({id, name, type, data, noSensor}) =>  {
           .text(function(d) { return d.props.children.props.children; });
   }
 
+    function processMeasures(payload) {
+        console.log("Dans la fonction callback comme jaja de sensor tmtc : " + JSON.stringify(payload))
+
+        var obj = payload;
+
+        for (var i in obj) {
+            if (obj.hasOwnProperty(i)) {
+                var objet = obj[i]
+                for (var j in objet) {
+                    if (objet.hasOwnProperty(j)) {
+                        console.log("Test : " + j + " --> " + objet[j])
+                    }
+                }
+            }
+        }
+
+    }
+
+    function handleSubmit(e) {
+        console.log("ALLLLLLLLLLLLLOWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW");
+
+        smApi.updateSensor(name, tabVal['nomSensor'], tabVal['local'], processMeasures);
+
+        e.preventDefault();
+        event.preventDefault();
+    }
+
+    function handleInputChange(event) {
+      console.log("Bonsoir, ma vie c'est de la merde");
+      const target = event.target;
+      const value = target.value;
+      const name = target.name;
+
+      console.log("Test ma bite ----> " + name + " = " + value);
+      tabVal[name] = value;
+
+      console.log("On y arrive ! " + tabVal[name])
+    }
 
   
   return (
@@ -68,6 +107,27 @@ const Sensor = ({id, name, type, data, noSensor}) =>  {
 
       <h3>Valeur actuelle</h3>
       <p> <span className="badge">{value(data.slice(-1), type)+" "+unit(type)}</span></p>
+        <h1>Ajout d'information</h1>
+        <form onSubmit={handleSubmit}>
+            <label>
+                Nom du Sensor :
+                <input
+                    name="nomSensor"
+                    type="text"
+                    onChange={handleInputChange} />
+            </label>
+            <br />
+            <label>
+                Localisation :
+                <input
+                    name="local"
+                    type="text"
+                    onChange={handleInputChange} />
+            </label>
+            <br />
+            <input type="submit" value="Submit"/>
+        </form>
+
       <h3>Historique</h3>
       <table>
         <tbody>
@@ -83,7 +143,6 @@ const Sensor = ({id, name, type, data, noSensor}) =>  {
 class Content extends React.Component {
 
     componentWillMount() {
-        console.log('Component WILL MOUNT!')
     }
 
     componentDidMount() {
@@ -105,7 +164,6 @@ class Content extends React.Component {
         }
         else {*/
 
-            console.log('Component DID MOUNT!')
             var x = d3.scaleLinear()
                 .domain([0, 100])
                 .range([0, 1000]);
@@ -124,11 +182,9 @@ class Content extends React.Component {
                 });
         //}
 
-        console.log('Fin du composant');
     }
 
     componentWillReceiveProps(newProps) {
-        console.log('Component WILL RECIEVE PROPS!')
     }
 
     shouldComponentUpdate(newProps, newState) {
@@ -136,14 +192,12 @@ class Content extends React.Component {
     }
 
     componentWillUpdate(nextProps, nextState) {
-        console.log('Component WILL UPDATE!');
         d3.select(".chart").selectAll("div").remove();
         d3.select(".onoff").selectAll("div").remove();
 
     }
 
     componentDidUpdate(prevProps, prevState) {
-        console.log('Component DID UPDATE!');
 
         /*if(valnul="onoff") {
 
@@ -164,8 +218,6 @@ class Content extends React.Component {
                 .domain([0, 100])
                 .range([0, 1000]);
 
-            console.log(this.props.test)
-
             d3.select(".chart") //
                 .selectAll("div")
                 .data(this.props.test)
@@ -174,12 +226,9 @@ class Content extends React.Component {
                 .text(function(d) { return d.props.children.props.children; });
         //}
 
-
-        console.log('Fin du composant');
     }
 
     componentWillUnmount() {
-        console.log('Component WILL UNMOUNT!')
         d3.select(".comp").remove();
     }
 
