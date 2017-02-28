@@ -194,6 +194,8 @@ class Measure extends React.Component {
             [name]: value
         });
 
+
+
         console.log("Je suis en pls help");
     }
 
@@ -278,14 +280,22 @@ class Measure extends React.Component {
     }
 
     handleChange(event) {
-        this.setState({value: event.target.value});
 
-        /*if(this.state.value === "all") {
+        let select = event.target.value;
+
+        console.log("COUCOU " + select)
+
+        this.setState({value: select});
+
+
+
+        if(select === "all") {
             document.getElementById("inputVal").disabled = true;
         }
         else {
+
             document.getElementById("inputVal").disabled = false;
-        }*/
+        }
     }
 
     handleClick(event) {
@@ -382,7 +392,7 @@ class Measure extends React.Component {
                         </select>
                     </label>
                     <label>
-                        <input name="inputVal" type="number" id="inputVal" required="true" onChange={this.handleInputChange} />
+                        <input name="inputVal" type="number" disabled="true" id="inputVal" required="true" onChange={this.handleInputChange} />
                     </label>
                     <input type="submit" value="Submit" id="submit"/>
                 </form>
