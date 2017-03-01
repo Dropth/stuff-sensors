@@ -1,6 +1,8 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
+import { Button } from 'react-bootstrap';
+
 import { connectToBroker, disconnectFromBroker } from '../actions'
 
 import  {
@@ -42,15 +44,15 @@ console.log( broker, connectTo, disconnectFrom, status);
     <form
       className='Broker'
       onSubmit={cb} >
-      <label>MQTT Broker: </label>
+      <label>MQTT Broker: </label>&nbsp;&nbsp;
       <input
         ref={e => {element = e}}
         type="text"
         onChange={(event)=>{console.log('change', event)}}
         placeholder="ws://localhost:1234"
         value={broker}
-      />
-    <input type="submit" value={statusText}  disabled={connecting} />
+      />&nbsp;&nbsp;
+      <Button type="submit" disabled={connecting}>{statusText}</Button>
   </form>
   )
 }

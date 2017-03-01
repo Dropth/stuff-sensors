@@ -4,6 +4,8 @@
 import React from 'react'
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux'
+import { Button } from 'react-bootstrap';
+import { Table } from 'react-bootstrap';
 
 import Value from '../types/Value'
 import SensorType from '../types/SensorType'
@@ -76,7 +78,6 @@ class HistoForm extends React.Component {
     }
 
     processMeasures(payload) {
-        console.log("Dans la fonction callback comme jaja : " + payload)
         this.setState({
             listMeasures: payload
         });
@@ -117,16 +118,18 @@ class HistoForm extends React.Component {
         return (
             <form onSubmit={this.handleSubmit}>
                 <label>
-                    SensorId :
+                    SensorId :&nbsp;&nbsp;
                     <input
                         name="sensorId"
                         type="text"
-                        value={this.state.sensorId}
+                        placeholder={this.state.sensorId}
+                        disabled="true"
                         onChange={this.handleInputChange} />
                 </label>
                 <br />
+
                 <label>
-                    Date Min :
+                    Date Min :&nbsp;&nbsp;
                     <input
                         name="dateMin"
                         type="text"
@@ -134,14 +137,17 @@ class HistoForm extends React.Component {
                 </label>
                 <br />
                 <label>
-                    Date Max :
+                    Date Max :&nbsp;
                     <input
                         name="dateMax"
                         type="text"
                         onChange={this.handleInputChange} />
                 </label>
                 <br />
-                <input type="submit" value="Submit" />
+                <br />
+                <Button bsStyle="primary" type="submit" >Accéder aux données</Button>
+                <br />
+                <br />
             </form>
         );
     }
@@ -150,7 +156,6 @@ class HistoForm extends React.Component {
 class Measure extends React.Component {
     constructor(props) {
         super(props);
-        console.log('---------------------_____________________@@@@@@@@@@@@@@@@@@@@@@@@@@ : ' + this.afficherProps(this.props))
         var mesure = []
         var obj = this.props;
 
@@ -193,8 +198,6 @@ class Measure extends React.Component {
         this.setState({
             [name]: value
         });
-
-        console.log("Je suis en pls help");
     }
 
     handleSubmit(event) {
@@ -229,8 +232,6 @@ class Measure extends React.Component {
 
         if (this.state.value !== 'all') {
 
-            console.log("GOGOGOGGOGOGOGGOGOGO")
-
             let tabVal = [];
 
             for (let val of this.state.measures) {
@@ -240,7 +241,6 @@ class Measure extends React.Component {
 
                 switch(this.state.value) {
                     case "hour":
-                        console.log("Test : " + typeof(date.getHours()) +" == " + typeof(formVal) + " ---> ");
                         if(date.getHours() === formVal) {
                             tabVal.push(val);
                         }
@@ -251,7 +251,6 @@ class Measure extends React.Component {
                         }
                         break;
                     case "week":
-                        console.log("Test : " + date.getWeek() +" == " + formVal + " ---> ");
                         if(date.getWeek() === formVal) {
                             tabVal.push(val);
                         }
@@ -259,20 +258,10 @@ class Measure extends React.Component {
                 }
             }
 
-            console.log("TEEEEEEEEEEEEEEEEST : " + tabVal)
-            console.log("TEEEEEEEEEEEEEEEEST  TAMER PUTAIN : " + tabVal.length)
-
-            //this.setState({tabInterval: tabVal});
             this.state.tabInterval = tabVal;
-
-            console.log("TEEEEEEEEEEEEEEEEST : " + this.state.tabInterval)
-            console.log("TEEEEEEEEEEEEEEEEST  TAMER PUTAIN : " + this.state.tabInterval.length)
         }
         else
             this.state.tabInterval = [];
-
-
-        console.log("TEEEEEEEEEEEEEEEEST NUMMMMMMMMMMMMMBER 2 : " + this.state.tabInterval.length)
 
         if(this.state.value !== "all")
             if(this.state.tabInterval.length === 0)
@@ -295,13 +284,8 @@ class Measure extends React.Component {
 
         let select = event.target.value;
 
-        console.log("COUCOU " + select)
-
-        //this.setState({value: select});
         this.state.value = select;
         document.getElementById("testSelect").value = this.state.value;
-
-        console.log("COUCOU ALLLLLLLLLOW " + this.state.value)
 
         if(select === "all") {
             document.getElementById("inputVal").disabled = true;
@@ -333,7 +317,6 @@ class Measure extends React.Component {
     }
 
     handleClickAfter(event) {
-        console.log("ALLLLLLLLLLLLLLLOW : " + this.state)
 
         if(this.state.deb > 0) {
 
@@ -351,7 +334,6 @@ class Measure extends React.Component {
                 resultat += "<td>"+ obj[i] + "</td>";
             }
         }
-        //resultat+="</tr>"
         return resultat;
     }
 
@@ -359,22 +341,32 @@ class Measure extends React.Component {
 
     render() {
 
-        if(this.state.deb < 0)
+        let isPre;
+        let isSuiv;
+
+        if(this.state.deb === 0 || this.state.deb < 0) {
             this.state.deb = 0;
+            isSuiv=true;
+        }
+        else
+            isSuiv=false;
+
 
         let cpt=this.state.deb;
         let tabFinal = [];
-
-        console.log("This isn't my final form ----> Deb : " + this.state.deb + " ________  Fin : " + this.state.fin)
 
         let end =this.state.end;
 
         if(this.state.tabInterval.length === 0) {
 
-            if (this.state.fin <= this.state.measures.length - 1)
+            if (this.state.fin <= this.state.measures.length - 1){
+                isPre = false;
                 end = this.state.fin;
-            else
+            }
+            else {
                 end = this.state.measures.length - 1;
+                isPre = true;
+            }
 
             for (cpt; cpt < end; cpt++) {
                 tabFinal[cpt] = this.state.measures[cpt];
@@ -382,10 +374,14 @@ class Measure extends React.Component {
 
         }
         else {
-            if (this.state.fin <= this.state.tabInterval.length - 1)
+            if (this.state.fin <= this.state.tabInterval.length - 1) {
+                isPre = false;
                 end = this.state.fin;
-            else
+            }
+            else {
                 end = this.state.tabInterval.length - 1;
+                isPre = true;
+            }
 
             for (cpt; cpt < end; cpt++) {
                 tabFinal[cpt] = this.state.tabInterval[cpt];
@@ -398,23 +394,24 @@ class Measure extends React.Component {
 
                 <form onSubmit={this.handleSubmit}>
                     <label>
-                        Choix de l'intervalle :
+                        Choix de l'intervalle :&nbsp;&nbsp;
                         <select id="testSelect" value={this.state.value} onChange={this.handleChange}>
                             <option value="all">All</option>
                             <option value="hour">Heure</option>
                             <option value="day">Journée (Jour du mois)</option>
                             <option value="week">Semaine (Semaine de l'année)</option>
-                        </select>
+                        </select>&nbsp;&nbsp;
                     </label>
                     <label>
                         <input name="inputVal" type="number" disabled="true" id="inputVal" required="true" onChange={this.handleInputChange} />
                     </label>
-                    <input type="submit" value="Submit" id="submit"/>
+                    &nbsp;&nbsp;<Button bsStyle="primary" type="submit" >Appliquer l'intervalle</Button>
                 </form>
 
                 <h2 id="nothing"></h2>
 
-                <table>                    <thead>
+                <Table responsive>
+                    <thead>
                         <tr>
                             <th>_id</th>
                             <th>sensorId</th>
@@ -434,9 +431,9 @@ class Measure extends React.Component {
                         );
                     })}
                     </tbody>
-                </table>
+                </Table>
                 <br/>
-                <input type="button" onClick={this.handleClick} value="Retour vers le passé"/> <input type="button" onClick={this.handleClickAfter} value="Retour vers le futur"/>
+                <center><Button bsStyle="warning" onClick={this.handleClick} disabled={isPre}>Precedent</Button> <Button bsStyle="success" onClick={this.handleClickAfter} disabled={isSuiv} >Suivant</Button></center>
             </div>
 
         );

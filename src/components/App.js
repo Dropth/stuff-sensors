@@ -9,8 +9,10 @@ import AppNav from "./AppNav"
 
 class App extends Component {
   render() {
+
     return (
       <div className="App">
+          <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css" />
         <div className="App-header">
           <div className="App-header-logo">
             <img src={logo} className="App-logo" alt="logo" />

@@ -1,5 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
+import { browserHistory } from 'react-router';
+import { Button } from 'react-bootstrap';
 
 import Value from '../types/Value'
 import SensorType from '../types/SensorType'
@@ -21,7 +23,7 @@ const Sensor = ({id, name, type, data, noSensor}) =>  {
     return units[type] || ""
   }
   const value  = (v, t) => {
-
+//
     /*if(t == SensorType.ON_OFF)
           valnul ="onoff";
       else
@@ -45,8 +47,6 @@ const Sensor = ({id, name, type, data, noSensor}) =>  {
   
   function test () {
 
-      console.log(values[0].props.children.props.children);
-
       //var data = [4, 8, 15, 16, 23, 42];
 
       var x = d3.scaleLinear()
@@ -62,16 +62,20 @@ const Sensor = ({id, name, type, data, noSensor}) =>  {
   }
 
     function processMeasures(payload) {
-        console.log("Dans la fonction callback comme jaja de sensor tmtc : " + JSON.stringify(payload))
-
         var obj = payload;
+
+        document.getElementById("infoSensor").innerHTML += "<h3>Nouvelle valeur du Sensor</h3>"
 
         for (var i in obj) {
             if (obj.hasOwnProperty(i)) {
                 var objet = obj[i]
                 for (var j in objet) {
                     if (objet.hasOwnProperty(j)) {
-                        console.log("Test : " + j + " --> " + objet[j])
+
+                        document.getElementById("infoSensor").innerHTML += "<ul>"
+                        document.getElementById("infoSensor").innerHTML += "<li><p>" + j + " : <span class=\"badge\">" + objet[j] + "</span></p></li>"
+                        document.getElementById("infoSensor").innerHTML += "</ul>"
+
                     }
                 }
             }
@@ -80,7 +84,6 @@ const Sensor = ({id, name, type, data, noSensor}) =>  {
     }
 
     function handleSubmit(e) {
-        console.log("ALLLLLLLLLLLLLOWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW");
 
         smApi.updateSensor(name, tabVal['nomSensor'], tabVal['local'], processMeasures);
 
@@ -89,19 +92,26 @@ const Sensor = ({id, name, type, data, noSensor}) =>  {
     }
 
     function handleInputChange(event) {
-      console.log("Bonsoir, ma vie c'est de la merde");
+
+        document.getElementById("infoSensor").innerHTML = "";
+
       const target = event.target;
       const value = target.value;
       const name = target.name;
 
-      console.log("Test ma bite ----> " + name + " = " + value);
       tabVal[name] = value;
-
-      console.log("On y arrive ! " + tabVal[name])
     }
 
-  
-  return (
+    browserHistory.listen( location =>  {
+        document.getElementById("infoSensor").innerHTML = "";
+        document.getElementById("nomSensor").value = "";
+        document.getElementById("local").value = "";
+
+    });
+
+
+
+    return (
     <div className="Sensor">
       <h1>{name}</h1>
 
@@ -110,23 +120,27 @@ const Sensor = ({id, name, type, data, noSensor}) =>  {
         <h1>Ajout d'information</h1>
         <form onSubmit={handleSubmit}>
             <label>
-                Nom du Sensor :
+                Nom du Sensor : &nbsp;&nbsp;&nbsp;
                 <input
                     name="nomSensor"
+                    id="nomSensor"
                     type="text"
                     onChange={handleInputChange} />
             </label>
             <br />
             <label>
-                Localisation :
+                Localisation : &nbsp;&nbsp;&nbsp;
                 <input
                     name="local"
+                    id="local"
                     type="text"
                     onChange={handleInputChange} />
             </label>
             <br />
-            <input type="submit" value="Submit"/>
+            <Button bsStyle="primary" type="submit"> Update Sensor </Button>
         </form>
+
+        <div id="infoSensor"></div>
 
       <h3>Historique</h3>
       <table>
@@ -147,28 +161,9 @@ class Content extends React.Component {
 
     componentDidMount() {
 
-        /*if(valnul="onoff") {
-
-            console.log('Allow')
-
-            var svgContainer = d3.select(".onoff").selectAll("div")
-                .data(this.props.test).enter().append("svg")
-                .attr("width", 200)
-                .attr("height", 200);
-
-
-            var circle = svgContainer.append("circle")
-                .attr("cx", 30)
-                .attr("cy", 30)
-                .attr("r", 20);
-        }
-        else {*/
-
             var x = d3.scaleLinear()
                 .domain([0, 100])
                 .range([0, 1000]);
-
-            console.log(this.props.test)
 
             d3.select(".chart") //
                 .selectAll("div")
@@ -199,21 +194,6 @@ class Content extends React.Component {
 
     componentDidUpdate(prevProps, prevState) {
 
-        /*if(valnul="onoff") {
-
-            console.log('Allow                                         ----- ')
-
-            var svgContainer = d3.select(".onoff").data(this.props.test).enter().append("svg")
-                .attr("width", 200)
-                .attr("height", 200);
-
-
-            var circle = svgContainer.append("circle")
-                                     .attr("cx", 30)
-                                     .attr("cy", 30)
-                                     .attr("r", 20);
-        }
-        else {*/
             var x = d3.scaleLinear()
                 .domain([0, 100])
                 .range([0, 1000]);
@@ -224,7 +204,7 @@ class Content extends React.Component {
                 .enter().append("div")
                 .style("width", function(d) { return x(d.props.children.props.children) + "px"; })
                 .text(function(d) { return d.props.children.props.children; });
-        //}
+
 
     }
 
