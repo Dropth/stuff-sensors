@@ -50,4 +50,12 @@ Pour ce qui est de l'appli :
 
 Des screenshots sont fournis pour visualer tout ceci dans le dossier /screenshots
 
+## Serveur généré par Swagger
+
+Pour cette partie, il ne faut pas oublier d'installer mongoose pour que la connexion opère :
+
+```bash
+npm install mongoose
+```
+La partie concernant l'obtention des données se trouve dans controllers/SensorsService.js
 
