@@ -1,0 +1,111 @@
+---
+swagger: "2.0"
+info:
+  description: "sensor"
+  version: "1.0.0"
+  title: "sensor"
+host: "localhost:8070"
+basePath: "/v1"
+schemes:
+- "http"
+produces:
+- "application/json"
+paths:
+  /senso:
+    get:
+      tags:
+      - "Sensors"
+      summary: "Sensor Types"
+      description: "C'est un senseur mamène\n"
+      operationId: "sensorsPOST"
+      parameters:
+      - name: "id"
+        in: "query"
+        description: "Id du sensor"
+        required: true
+        type: "string"
+        format: "string"
+      - name: "nom"
+        in: "query"
+        description: "nom du sensor"
+        required: true
+        type: "string"
+      - name: "local"
+        in: "query"
+        description: "localisation du sensor"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "An array of histoSensor"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/histoSensor"
+        default:
+          description: "Unexpected error"
+          schema:
+            $ref: "#/definitions/Error"
+      x-swagger-router-controller: "Sensors"
+  /sensors:
+    get:
+      tags:
+      - "Sensors"
+      summary: "Product Types"
+      description: "permet de voir l'intervalle de temps des sensors\n"
+      operationId: "sensorsGET"
+      parameters:
+      - name: "idSensor"
+        in: "query"
+        description: "idSensor"
+        required: true
+        type: "string"
+      - name: "dateMin"
+        in: "query"
+        description: "date Intervalle"
+        required: true
+        type: "string"
+        format: "date"
+      - name: "dateMax"
+        in: "query"
+        description: "date Intervalle"
+        required: true
+        type: "string"
+        format: "date"
+      responses:
+        200:
+          description: "An array of histoSensor"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/histoSensor"
+        default:
+          description: "Unexpected error"
+          schema:
+            $ref: "#/definitions/Error"
+      x-swagger-router-controller: "Sensors"
+definitions:
+  histoSensor:
+    type: "object"
+    properties:
+      SensorId:
+        type: "string"
+        description: "id sensor"
+      date:
+        type: "string"
+        format: "date"
+        description: "date"
+      value:
+        type: "integer"
+        description: "valeur"
+  Error:
+    type: "object"
+    properties:
+      code:
+        type: "integer"
+        format: "int32"
+      message:
+        type: "string"
+      fields:
+        type: "string"
+
